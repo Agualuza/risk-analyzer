@@ -24,15 +24,20 @@ def analyze(pid, cid, pp):
     payment = random.randint(980, 25000)
 
     if pid == 1:
-        bill = 0.3 * payment
+        payment = random.randint(7000, 15000)
+        bill = int(((random.randint(10, 45)) / 100) * payment)
     elif pid == 2:
-        bill = 0.5 * payment
+        payment = random.randint(3000, 8000)
+        bill = int(((random.randint(30, 65)) / 100) * payment)
     elif pid == 3:
-        bill = 0.7 * payment
+        payment = random.randint(2000, 5000)
+        bill = int(((random.randint(50, 85)) / 100) * payment)
     elif pid == 4:
-        bill = 1.0 * payment
+        payment = random.randint(1400, 3500)
+        bill = int(((random.randint(80, 115)) / 100) * payment)
     else:
-        bill = 1.2 * payment
+        payment = random.randint(980, 1400)
+        bill = int(((random.randint(100, 135)) / 100) * payment)
 
     factors = [1.2, 1.1, 1.0, 0.9, 0.8]
     categoriesTypes = ["L", "L", "L", "F", "F", "F", "N", "N", "N", "P", "P"]
