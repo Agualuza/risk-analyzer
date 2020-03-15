@@ -3,7 +3,8 @@ from methods import run
 import os
 
 app = Flask(__name__)
-port = os.getenv('PORT') if os.getenv('PORT') else "8000"
+# port = os.getenv('PORT') if os.getenv('PORT') else "8000"
+port = "8000"
 
 @app.route("/")
 def main():
