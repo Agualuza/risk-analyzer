@@ -2,6 +2,7 @@ from sklearn.naive_bayes import MultinomialNB
 
 import csv
 import numpy as np
+import pickle
 
 import random
 
@@ -18,30 +19,31 @@ def dataGenerator():
     writer = csv.writer(file)
     writer.writerows(rows)
 
-def analyze(pid,cid,pp):
-  evaluations = ["RB","RM","RE","YB","YM","YE","GB","GM","GE"]
-  payments = [10000,5000,3500,2500,1200]
-  bills = [3000,2500,2450,2500,1800]
-  factors = [1.2,1.1,1.0,0.9,0.8]
-  categoriesTypes = ["L","L","L","F","F","F","N","N","N","P","P"]
 
-  balance = (payments[pid-1] * 0.7) - bills[pid-1]
-  balance = max(balance,400)
+def analyze(pid, cid, pp):
+    evaluations = ["RB", "RM", "RE", "YB", "YM", "YE", "GB", "GM", "GE"]
+    payment = random.randint(980, 25000)
+    bill = min(random.randint(980, 25000), payment * 1.5)
+    factors = [1.2, 1.1, 1.0, 0.9, 0.8]
+    categoriesTypes = ["L", "L", "L", "F", "F", "F", "N", "N", "N", "P", "P"]
 
-  response = (balance / pp) * factors[pid-1]
+    balance = (payment * 0.7) - bill
+    balance = max(balance, 400)
 
-  evaluation = calculateEvaluation(response)
-  evaluation = getBestEvalAllowed(evaluations[evaluation],evaluation, categoriesTypes[cid-1], pid)
- 
-  resp = []
-  resp.append(pid)
-  resp.append(cid)
-  resp.append(payments[pid-1])
-  resp.append(bills[pid-1])
-  resp.append(pp)
-  resp.append(evaluations[evaluation])
+    response = (balance / pp) * factors[pid - 1]
 
-  return resp
+    evaluation = calculateEvaluation(response)
+    evaluation = getBestEvalAllowed(evaluations[evaluation], evaluation, categoriesTypes[cid - 1], pid)
+
+    resp = []
+    resp.append(pid)
+    resp.append(cid)
+    resp.append(payment)
+    resp.append(bill)
+    resp.append(pp)
+    resp.append(evaluations[evaluation])
+
+    return resp
 
 def calculateEvaluation(r):
   if (r >= 1.0) :
@@ -85,7 +87,7 @@ def loadDataSet():
     data = []
     response = []
 
-    file = open('dataset1.csv', 'r')
+    file = open('dataset2.csv', 'r')
     reader = csv.reader(file)
     for persona_id, category_id,payment, bill, product_price, evaluation in reader:
         data.append([persona_id, category_id,payment, bill, product_price])
@@ -96,16 +98,17 @@ def loadDataSet():
 def train(model,dataset,response):
   data = np.array(dataset).astype(np.float)
   model.fit(data, response)
+  pickle.dump(model, open('model.sav', 'wb'))
 
 def run(pid,cid,payment,bill,pp):
-    dataset , response = loadDataSet()
+    # Methods to train model
+    # dataset , response = loadDataSet()
+    # model = MultinomialNB()
+    # dataset.pop(0)
+    # response.pop(0)
+    # train(model,dataset,response)
 
-    model = MultinomialNB()
-
-    dataset.pop(0)
-    response.pop(0)
-
-    train(model,dataset,response)
+    model = pickle.load(open('model.sav', 'rb'))
 
     misterioso = [[pid,cid,payment,bill,pp]]
     r = model.predict(misterioso)
