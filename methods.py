@@ -15,7 +15,7 @@ def dataGenerator():
     pp = random.randint(50,15000)
     rows.append(analyze(pid,cid,pp))
 
-  with open('dataset3.csv', 'w', newline='') as file:
+  with open('dataset4.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerows(rows)
 
@@ -97,7 +97,7 @@ def loadDataSet():
     data = []
     response = []
 
-    file = open('dataset3.csv', 'r')
+    file = open('dataset4.csv', 'r')
     reader = csv.reader(file)
     for persona_id, category_id,payment, bill, product_price, evaluation in reader:
         data.append([persona_id, category_id,payment, bill, product_price])
