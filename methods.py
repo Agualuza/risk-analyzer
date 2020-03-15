@@ -9,21 +9,31 @@ import random
 def dataGenerator():
   rows = [["persona_id","category_id","payment","bill","product_price","evaluation"]]
 
-  for i in range(150000):
+  for i in range(200000):
     pid = random.randint(1,5)
     cid = random.randint(1,11)
-    pp = random.random() * 350
+    pp = random.randint(50,15000)
     rows.append(analyze(pid,cid,pp))
 
-  with open('dataset1.csv', 'w', newline='') as file:
+  with open('dataset3.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     writer.writerows(rows)
-
 
 def analyze(pid, cid, pp):
     evaluations = ["RB", "RM", "RE", "YB", "YM", "YE", "GB", "GM", "GE"]
     payment = random.randint(980, 25000)
-    bill = min(random.randint(980, 25000), payment * 1.5)
+
+    if pid == 1:
+        bill = 0.3 * payment
+    elif pid == 2:
+        bill = 0.5 * payment
+    elif pid == 3:
+        bill = 0.7 * payment
+    elif pid == 4:
+        bill = 1.0 * payment
+    else:
+        bill = 1.2 * payment
+
     factors = [1.2, 1.1, 1.0, 0.9, 0.8]
     categoriesTypes = ["L", "L", "L", "F", "F", "F", "N", "N", "N", "P", "P"]
 
@@ -87,7 +97,7 @@ def loadDataSet():
     data = []
     response = []
 
-    file = open('dataset2.csv', 'r')
+    file = open('dataset3.csv', 'r')
     reader = csv.reader(file)
     for persona_id, category_id,payment, bill, product_price, evaluation in reader:
         data.append([persona_id, category_id,payment, bill, product_price])
