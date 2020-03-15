@@ -1,8 +1,10 @@
 from flask import Flask,jsonify,request
+from flask_cors import CORS
 from methods import run
 import os
 
 app = Flask(__name__)
+cors = CORS(app)
 port = os.getenv('PORT') if os.getenv('PORT') else "8000"
 
 @app.route("/")
