@@ -1,4 +1,6 @@
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import AdaBoostClassifier
 
 import csv
 import numpy as np
@@ -21,7 +23,6 @@ def dataGenerator():
 
 def analyze(pid, cid, pp):
     evaluations = ["RB", "RM", "RE", "YB", "YM", "YE", "GB", "GM", "GE"]
-    payment = random.randint(980, 25000)
 
     if pid == 1:
         payment = random.randint(7000, 15000)
@@ -98,11 +99,11 @@ def getBestEvalAllowed(r,rindex,ct,pid):
   
   return rindex
 
-def loadDataSet():
+def loadDataSet(file):
     data = []
     response = []
 
-    file = open('dataset4.csv', 'r')
+    file = open(file, 'r')
     reader = csv.reader(file)
     for persona_id, category_id,payment, bill, product_price, evaluation in reader:
         data.append([persona_id, category_id,payment, bill, product_price])
@@ -110,18 +111,18 @@ def loadDataSet():
 
     return data, response
 
-def train(model,dataset,response):
+def train(model,dataset,response,filename):
   data = np.array(dataset).astype(np.float)
   model.fit(data, response)
-  pickle.dump(model, open('model.sav', 'wb'))
+  pickle.dump(model, open(filename, 'wb'))
 
 def run(pid,cid,payment,bill,pp):
     # Methods to train model
-    # dataset , response = loadDataSet()
+    # dataset , response = loadDataSet('dataset4.csv')
     # model = MultinomialNB()
     # dataset.pop(0)
     # response.pop(0)
-    # train(model,dataset,response)
+    # train(model,dataset,response,'model.sav')
 
     model = pickle.load(open('model.sav', 'rb'))
 
@@ -136,3 +137,69 @@ def run(pid,cid,payment,bill,pp):
         json_response["response"] = r[0]
     return json_response
 
+def runLogisticRegression(pid,cid,payment,bill,pp):
+    # Methods to train model
+    # dataset , response = loadDataSet('dataset4.csv')
+    # model = LogisticRegression()
+    # dataset.pop(0)
+    # response.pop(0)
+    # train(model,dataset,response,'modelLogisticRegression2.sav')
+
+    model = pickle.load(open('modelLogisticRegression.sav', 'rb'))
+
+    misterioso = [[pid, cid, payment, bill, pp]]
+    r = model.predict(misterioso)
+
+    json_response = {}
+    json_response["status"] = "NOK"
+    json_response["response"] = None
+    if r[0]:
+        json_response["status"] = "OK"
+        json_response["response"] = r[0]
+    return json_response
+
+
+def runAdaBoost(pid,cid,payment,bill,pp):
+    # Methods to train model
+    # dataset , response = loadDataSet('dataset4.csv')
+    # model = AdaBoostClassifier()
+    # dataset.pop(0)
+    # response.pop(0)
+    # train(model,dataset,response,'modelAdaBoost.sav')
+
+    model = pickle.load(open('modelAdaBoost.sav', 'rb'))
+
+    mysterious = [[pid, cid, payment, bill, pp]]
+    r = model.predict(mysterious)
+
+    json_response = {}
+    json_response["status"] = "NOK"
+    json_response["response"] = None
+    if r[0]:
+        json_response["status"] = "OK"
+        json_response["response"] = r[0]
+    return json_response
+
+def getAccuracy(algorithm,fileModel,fileTest):
+    model = pickle.load(open(fileModel, 'rb'))
+    dataSet, results = loadDataSet('dataset4.csv')
+    dataSet.pop(0)
+    results.pop(0)
+
+    res = model.predict([dataSet])
+
+    hits = res == results
+
+    totalHits = sum(hits)
+    total = len(results)
+
+    accuracy = 100.0 * totalHits/total
+
+    return algorithm + " accuracy: " + accuracy
+
+def runAccuracyTests():
+    nb = getAccuracy("Naive Bayes algorithm","model.sav","dataset3.csv")
+    lr = getAccuracy("Logistic Regression algorithm", "modelLogisticRegression.sav", "dataset3.csv")
+    ab = getAccuracy("AdaBoost algorithm", "modelAdaBoost.sav", "dataset3.csv")
+
+    return nb,lr,ab
