@@ -139,13 +139,13 @@ def run(pid,cid,payment,bill,pp):
 
 def runLogisticRegression(pid,cid,payment,bill,pp):
     # Methods to train model
-    # dataset , response = loadDataSet('dataset4.csv')
+    # dataset,response = loadDataSet('NewDataSet.csv')
     # model = LogisticRegression()
     # dataset.pop(0)
     # response.pop(0)
-    # train(model,dataset,response,'modelLogisticRegression2.sav')
+    # train(model,dataset,response,'modelLogisticRegressionNew.sav')
 
-    model = pickle.load(open('modelLogisticRegression.sav', 'rb'))
+    model = pickle.load(open('modelLogisticRegressionNew.sav', 'rb'))
 
     misterioso = [[pid, cid, payment, bill, pp]]
     r = model.predict(misterioso)
